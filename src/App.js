@@ -25,31 +25,53 @@ export default function App() {
 }
 
 function Accordion({ data }) {
+  const [curOpen, setCurOpen] = useState(null); //null means on refresh no number is selected n nothing is open yet
+
   return (
     <div className="accordion">
       {data.map((item, index) => (
         <AccordionItem
+          curOpen={curOpen}
+          setCurOpen={setCurOpen}
           key={index}
           num={index}
           title={item.title}
-          text={item.text}
-        />
+        >
+          {item.text}
+        </AccordionItem>
       ))}
+
+      <AccordionItem
+        curOpen={curOpen}
+        setCurOpen={setCurOpen}
+        key={3}
+        num={3}
+        title={"TEST-1"}
+      >
+        <ul>
+          <li>Does the content show?</li>
+          <li>Does it break?</li>
+          <li>Does the children prop work?</li>
+        </ul>
+      </AccordionItem>
     </div>
   );
 }
 
-function AccordionItem({ num, title, text }) {
-  const [isOpen, setIsOpen] = useState(false);
+function AccordionItem({ num, title, curOpen, setCurOpen, children }) {
+  const isOpen = num === curOpen;
+
   function handleToggle() {
-    setIsOpen(!isOpen);
+    setCurOpen(isOpen ? null : num); //if u select a num that is the currently open one then we set it to null so that no num is selected ,to close it .
+    //else we open the num we clicked on
   }
+
   return (
     <div className={`item ${isOpen ? "open" : ""}`} onClick={handleToggle}>
       <p className="number">{num < 9 ? `0${num + 1}` : num + 1}</p>
       <p className="title">{title}</p>
       <p className="icon">{isOpen ? "-" : "+"}</p>
-      {isOpen && <div className="content-box">{text}</div>}
+      {isOpen && <div className="content-box">{children}</div>}
     </div>
   );
 }
